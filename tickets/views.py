@@ -26,7 +26,7 @@ def create_ticket(request):
                     # send email func
                     subject = f'{var.ticket_title} #{var.ticket_id}'
                     message = 'Thank you for creating a ticket, we will assign an engineer soon.'
-                    email_from = 'chidiohiri@email.com'
+                    email_from = 'benyoung@email.com'
                     recipient_list = [request.user.email, ]
                     send_mail(subject, message, email_from, recipient_list)
                     messages.success(request,
@@ -41,35 +41,35 @@ def create_ticket(request):
     else:
         form = CreateTicketForm()
         context = {'form': form}
-        return render(request, 'ticket/create_ticket.html', context)
+        return render(request, 'tickets/create_ticket.html', context)
 
 
 # cx can see all active tickets
 def customer_active_tickets(request):
     tickets = Ticket.objects.filter(customer=request.user, is_resolved=False).order_by('-created_on')
     context = {'tickets': tickets}
-    return render(request, 'ticket/customer_active_tickets.html', context)
+    return render(request, 'tickets/customer_active_tickets.html', context)
 
 
 # cx can see all resolved tickets
 def customer_resolved_tickets(request):
     tickets = Ticket.objects.filter(customer=request.user, is_resolved=True).order_by('-created_on')
     context = {'tickets': tickets}
-    return render(request, 'ticket/customer_resolved_tickets.html', context)
+    return render(request, 'tickets/customer_resolved_tickets.html', context)
 
 
 # engineer can see all his/her active tickets
 def engineer_active_tickets(request):
     tickets = Ticket.objects.filter(engineer=request.user, is_resolved=False).order_by('-created_on')
     context = {'tickets': tickets}
-    return render(request, 'ticket/engineer_active_tickets.html', context)
+    return render(request, 'tickets/engineer_active_tickets.html', context)
 
 
 # engineer can see all his/her resolved tickets
 def engineer_resolved_tickets(request):
     tickets = Ticket.objects.filter(engineer=request.user, is_resolved=True).order_by('-created_on')
     context = {'tickets': tickets}
-    return render(request, 'ticket/engineer_resolved_tickets.html', context)
+    return render(request, 'tickets/engineer_resolved_tickets.html', context)
 
 
 # assign tickets to engineers
@@ -91,21 +91,21 @@ def assign_ticket(request, ticket_id):
         form = AssignTicketForm(instance=ticket)
         form.fields['engineer'].queryset = User.objects.filter(is_engineer=True)
         context = {'form': form, 'ticket': ticket}
-        return render(request, 'ticket/assign_ticket.html', context)
+        return render(request, 'tickets/assign_ticket.html', context)
 
 
 # ticket details
 def ticket_details(request, ticket_id):
     ticket = Ticket.objects.get(ticket_id=ticket_id)
     context = {'ticket': ticket}
-    return render(request, 'ticket/ticket_details.html', context)
+    return render(request, 'tickets/ticket_details.html', context)
 
 
 # ticket queue (for only admins)
 def ticket_queue(request):
     tickets = Ticket.objects.filter(is_assigned_to_engineer=False)
     context = {'tickets': tickets}
-    return render(request, 'ticket/ticket_queue.html', context)
+    return render(request, 'tickets/ticket_queue.html', context)
 
 
 def resolve_ticket(request, ticket_id):
