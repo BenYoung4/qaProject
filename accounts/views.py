@@ -35,4 +35,3 @@ def logout(request):
     logout(request)
     messages.success(request, 'You have successfully logged out')
     return redirect('login')
-

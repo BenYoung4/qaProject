@@ -5,3 +5,4 @@ class CustomUser(AbstractUser):
     is_customer = models.BooleanField(default=False)
     is_helpdesk = models.BooleanField(default=False)
     email = models.EmailField(unique=True)
+    username = models.CharField(max_length=255, unique=True)
