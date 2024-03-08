@@ -21,7 +21,7 @@
                     <td>{{ticket.ticket_title}}</td>
                     <td>{{ticket.customer}}</td>
                     <td>{{ticket.created_on}}</td>
-                    <td><a href="{% url 'assign-ticket' ticket.ticket_id %}" class="btn btn-outline-primary btn-sm">Assign to Engineer</a></td>
+                    <td><a href="{% url 'assign-ticket' ticket.ticket_id %}" class="btn btn-outline-primary btn-sm">Assign to helpdesk agent</a></td>
                 </tr>
                 {% endfor %}
             </tbody>

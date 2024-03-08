@@ -9,4 +9,4 @@ class CreateTicketForm(forms.ModelForm):
 class AssignTicketForm(forms.ModelForm):
     class Meta:
         model = Ticket
-        fields = ['engineer']
+        fields = ['helpdesk']

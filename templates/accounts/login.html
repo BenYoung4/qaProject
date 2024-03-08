@@ -9,8 +9,8 @@ Log in to Continue
 <form class="p-4 p-md-5 border rounded-3 bg-light" method="POST">
     {% csrf_token %}
     <div class="form-floating mb-3">
-        <input type="email" name="username" class="form-control" id="floatingInput">
-        <label for="floatingInput">Email address</label>
+        <input type="text" name="username" class="form-control" id="floatingInput">
+        <label for="floatingInput">Username</label>
     </div>
     <div class="form-floating mb-3">
         <input type="password" name="password" class="form-control" id="floatingPassword">

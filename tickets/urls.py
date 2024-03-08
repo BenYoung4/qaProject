@@ -8,7 +8,7 @@ urlpatterns = [
     path('assign-ticket/<str:ticket_id>/', views.assign_ticket, name='assign-ticket'),
     path('ticket-details/<str:ticket_id>/', views.ticket_details, name='ticket-details'),
     path('ticket-queue/', views.ticket_queue, name='ticket-queue'),
-    path('engineer-active-tickets/', views.engineer_active_tickets, name='engineer-active-tickets'),
-    path('engineer-resolved-tickets/', views.engineer_resolved_tickets, name='engineer-resolved-tickets'),
+    path('helpdesk-active-tickets/', views.helpdesk_active_tickets, name='helpdesk-active-tickets'),
+    path('helpdesk-resolved-tickets/', views.helpdesk_resolved_tickets, name='helpdesk-resolved-tickets'),
     path('resolve-ticket/<str:ticket_id>/', views.resolve_ticket, name='resolve-ticket')
 ]

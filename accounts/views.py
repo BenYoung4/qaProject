@@ -4,6 +4,7 @@ from django.contrib.auth import authenticate, login as auth_login, logout as aut
 from django.views.generic.edit import FormView
 from django.views.generic import TemplateView
 from .form import RegisterCustomerForm
+from django.urls import reverse_lazy
 
 CustomUser = get_user_model()
 
@@ -11,14 +12,20 @@ CustomUser = get_user_model()
 class RegisterView(FormView):
     template_name = 'accounts/register.html'
     form_class = RegisterCustomerForm
-    success_url = 'login'
+    success_url = reverse_lazy('login')
 
     def form_valid(self, form):
-        form.save()
+        user = form.save()  # This should return a CustomUser instance
+
+        # Add the role, if it's a field on the CustomUser model
+        user.is_customer = True
+        user.save()
+
         messages.success(self.request, 'Registration successful')
         return super().form_valid(form)
 
     def form_invalid(self, form):
+        print(form.errors)
         messages.error(self.request, 'Error during registration')
         return super().form_invalid(form)
 
@@ -35,9 +42,10 @@ def authenticate_user_and_login(request):
     authenticated_user = authenticate(request, username=username, password=password)
     if authenticated_user is not None:
         auth_login(request, authenticated_user)
-        return redirect('home')
+        return redirect('dashboard')
     else:
-        messages.error(request, 'Invalid username or password')
+        messages.error(request, 'Invalid email or password.')
+        return render(request, 'accounts/login.html')
 
 
 class LogoutView(TemplateView):

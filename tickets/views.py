@@ -12,29 +12,23 @@ User = get_user_model()
 
 
 # cx can create a ticket from here
+def generate_unique_ticket_id():
+    while True:
+        id = ''.join(random.choices(string.digits, k=6))
+        if not Ticket.objects.filter(ticket_id=id).exists():
+            return id
+
 def create_ticket(request):
     if request.method == 'POST':
         form = CreateTicketForm(request.POST)
         if form.is_valid():
-            var = form.save(commit=False)
-            var.customer = request.user
-            while not var.ticket_id:
-                id = ''.join(random.choices(string.digits, k=6))
-                try:
-                    var.ticket_id = id
-                    var.save()
-                    # send email func
-                    subject = f'{var.ticket_title} #{var.ticket_id}'
-                    message = 'Thank you for creating a ticket, we will assign an engineer soon.'
-                    email_from = 'benyoung@email.com'
-                    recipient_list = [request.user.email, ]
-                    send_mail(subject, message, email_from, recipient_list)
-                    messages.success(request,
-                                     'Your ticket has been submitted. A Support Engineer would reach out soon.')
-                    return redirect('customer-active-tickets')
-                    # break
-                except IntegrityError:
-                    continue
+            ticket = form.save(commit=False)
+            ticket.customer = request.user
+            ticket.ticket_id = generate_unique_ticket_id()
+            ticket.save()
+            messages.success(request,
+                             'Your ticket has been submitted. A helpdesk agent will reach out soon.')
+            return redirect('customer-active-tickets')
         else:
             messages.warning(request, 'Something went wrong. Please check form errors')
             return redirect('create-ticket')
@@ -45,51 +39,52 @@ def create_ticket(request):
 
 
 # cx can see all active tickets
+def get_tickets(request, role, is_resolved, template_name):
+    if role == 'helpdesk':
+        filter_params = {'is_resolved': is_resolved}  # remove the role filter
+    else:
+        filter_params = {role: request.user, 'is_resolved': is_resolved}
+
+    tickets = Ticket.objects.filter(**filter_params).order_by('-created_on')
+
+    context = {'tickets': tickets}
+    return render(request, template_name, context)
+
+
 def customer_active_tickets(request):
-    tickets = Ticket.objects.filter(customer=request.user, is_resolved=False).order_by('-created_on')
-    context = {'tickets': tickets}
-    return render(request, 'tickets/customer_active_tickets.html', context)
+    return get_tickets(request, 'customer', False, 'tickets/customer_active_tickets.html')
 
 
-# cx can see all resolved tickets
 def customer_resolved_tickets(request):
-    tickets = Ticket.objects.filter(customer=request.user, is_resolved=True).order_by('-created_on')
-    context = {'tickets': tickets}
-    return render(request, 'tickets/customer_resolved_tickets.html', context)
+    return get_tickets(request, 'customer', True, 'tickets/customer_resolved_tickets.html')
 
 
-# engineer can see all his/her active tickets
-def engineer_active_tickets(request):
-    tickets = Ticket.objects.filter(engineer=request.user, is_resolved=False).order_by('-created_on')
-    context = {'tickets': tickets}
-    return render(request, 'tickets/engineer_active_tickets.html', context)
+def helpdesk_active_tickets(request):
+    return get_tickets(request, 'helpdesk', False, 'tickets/helpdesk_active_tickets.html')
 
 
-# engineer can see all his/her resolved tickets
-def engineer_resolved_tickets(request):
-    tickets = Ticket.objects.filter(engineer=request.user, is_resolved=True).order_by('-created_on')
-    context = {'tickets': tickets}
-    return render(request, 'tickets/engineer_resolved_tickets.html', context)
+def helpdesk_resolved_tickets(request):
+    return get_tickets(request, 'helpdesk', True, 'tickets/helpdesk_resolved_tickets.html')
 
 
-# assign tickets to engineers
+# assign tickets to helpdesk
 def assign_ticket(request, ticket_id):
     ticket = Ticket.objects.get(ticket_id=ticket_id)
     if request.method == 'POST':
         form = AssignTicketForm(request.POST, instance=ticket)
         if form.is_valid():
             var = form.save(commit=False)
-            var.is_assigned_to_engineer = True
+            var.is_assigned_to_helpdesk = True
             var.status = 'Active'
             var.save()
-            messages.success(request, f'Ticket has been assigned to {var.engineer}')
+            messages.success(request, f'Ticket has been assigned to {var.helpdesk}')
             return redirect('ticket-queue')
         else:
             messages.warning(request, 'Something went wrong. Please check form input')
             return redirect('assign-ticket')  # check this out later
     else:
         form = AssignTicketForm(instance=ticket)
-        form.fields['engineer'].queryset = User.objects.filter(is_engineer=True)
+        form.fields['helpdesk'].queryset = User.objects.filter(is_helpdesk=True)
         context = {'form': form, 'ticket': ticket}
         return render(request, 'tickets/assign_ticket.html', context)
 
@@ -103,7 +98,7 @@ def ticket_details(request, ticket_id):
 
 # ticket queue (for only admins)
 def ticket_queue(request):
-    tickets = Ticket.objects.filter(is_assigned_to_engineer=False)
+    tickets = Ticket.objects.filter(is_assigned_to_helpdesk=False)
     context = {'tickets': tickets}
     return render(request, 'tickets/ticket_queue.html', context)
 

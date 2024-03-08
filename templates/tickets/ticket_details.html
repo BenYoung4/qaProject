@@ -28,7 +28,7 @@
                     <ul class="icon-list">
                         <li><b>ID:</b> {{ticket.ticket_id}}</li>
                         <li><b>Customer:</b> {{ticket.customer}}</li>
-                        <li><b> Engineer:</b> {{ticket.engineer}}</li>
+                        <li><b> Helpdesk agent:</b> {{ticket.helpdesk}}</li>
                         <li><b>Created On:</b> {{ticket.created_on}}</li>
                         <li><b>Urgency:</b> {{ticket.severity}}</li>
                     </ul>
@@ -47,7 +47,7 @@
     </div>
 </div>
 {% else %}
-{% if request.user.is_engineer %}
+{% if request.user.is_helpdesk %}
 
 <!-- Button trigger modal -->
 <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
