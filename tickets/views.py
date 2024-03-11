@@ -11,7 +11,7 @@ from .models import Ticket
 User = get_user_model()
 
 
-# cx can create a ticket from here
+# Creates ticket
 def generate_unique_ticket_id():
     while True:
         id = ''.join(random.choices(string.digits, k=6))
@@ -38,7 +38,7 @@ def create_ticket(request):
         return render(request, 'tickets/create_ticket.html', context)
 
 
-# cx can see all active tickets
+# View active tickets
 def get_tickets(request, role, is_resolved, template_name):
     if role == 'helpdesk':
         filter_params = {'is_resolved': is_resolved}  # remove the role filter
@@ -67,7 +67,7 @@ def helpdesk_resolved_tickets(request):
     return get_tickets(request, 'helpdesk', True, 'tickets/helpdesk_resolved_tickets.html')
 
 
-# assign tickets to helpdesk
+# Assign tickets to helpdesk agent
 def assign_ticket(request, ticket_id):
     ticket = Ticket.objects.get(ticket_id=ticket_id)
     if request.method == 'POST':
@@ -89,14 +89,14 @@ def assign_ticket(request, ticket_id):
         return render(request, 'tickets/assign_ticket.html', context)
 
 
-# ticket details
+# View ticket details
 def ticket_details(request, ticket_id):
     ticket = Ticket.objects.get(ticket_id=ticket_id)
     context = {'ticket': ticket}
     return render(request, 'tickets/ticket_details.html', context)
 
 
-# ticket queue (for only admins)
+# View ticket queue is user is admin
 def ticket_queue(request):
     tickets = Ticket.objects.filter(is_assigned_to_helpdesk=False)
     context = {'tickets': tickets}
