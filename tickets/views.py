@@ -81,7 +81,7 @@ def assign_ticket(request, ticket_id):
             return redirect('ticket-queue')
         else:
             messages.warning(request, 'Something went wrong. Please check form input')
-            return redirect('assign-ticket')  # check this out later
+            return redirect('assign-ticket')
     else:
         form = AssignTicketForm(instance=ticket)
         form.fields['helpdesk'].queryset = User.objects.filter(is_helpdesk=True)
@@ -96,13 +96,13 @@ def ticket_details(request, ticket_id):
     return render(request, 'tickets/ticket_details.html', context)
 
 
-# View ticket queue is user is admin
+# View ticket queue
 def ticket_queue(request):
     tickets = Ticket.objects.filter(is_assigned_to_helpdesk=False)
     context = {'tickets': tickets}
     return render(request, 'tickets/ticket_queue.html', context)
 
-
+# Resolve ticket
 def resolve_ticket(request, ticket_id):
     ticket = Ticket.objects.get(ticket_id=ticket_id)
     if request.method == 'POST':
