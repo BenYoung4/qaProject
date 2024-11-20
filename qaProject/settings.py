@@ -105,6 +105,13 @@ AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'qaProject.validators.CustomPasswordValidator'},
 ]
 
+# URL to redirect users to when login is required
+LOGIN_URL = '/accounts/login/'
+
+# Optionally, define where users should be redirected after login
+LOGIN_REDIRECT_URL = '/dashboard/'  # Change to the appropriate page after login
+
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.0/topics/i18n/
