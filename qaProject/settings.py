@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1', 'qaproject.onrender.com']
 
-CSRF_TRUSTED_ORIGINS = ['qaproject.onrender.com']
+CSRF_TRUSTED_ORIGINS = ['https://qaproject.onrender.com']
 
 # Use the PORT environment variable if it exists
 PORT = os.getenv('PORT', '8000')

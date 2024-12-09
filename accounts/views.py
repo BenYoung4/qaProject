@@ -5,7 +5,6 @@ from django.views.generic.edit import FormView
 from django.views.generic import TemplateView
 from .form import RegisterCustomerForm
 from django.urls import reverse_lazy
-from ratelimit.decorators import ratelimit
 
 CustomUser = get_user_model()
 
@@ -31,7 +30,6 @@ class RegisterView(FormView):
         return super().form_invalid(form)
 
 
-@ratelimit(ip=True, rate='5/m', block=True)
 def login(request):
     if request.method == 'POST':
         return authenticate_user_and_login(request)
