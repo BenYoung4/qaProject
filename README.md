@@ -1,5 +1,5 @@
 # QA Project
-Ticket management system built with Python using the Django framework for Level 5 Software Engineering & Agile module
+Ticket management system built with Python using the Django framework for Level 6 Software Engineering & DevOps Module
 
 **To start the application**
 
